@@ -14,7 +14,9 @@
 		"enabled": true
 	},
 	"upload_source_maps": true,
-	"compatibility_flags": ["nodejs_compat"],
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
 	"ai": {
 		"binding": "AI",
 	},
@@ -28,7 +30,9 @@
 	},
 	"migrations": [
 		{
-			"new_sqlite_classes": ["WebDetective"],
+			"new_sqlite_classes": [
+				"WebDetective"
+			],
 			"tag": "v1"
 		},
 	],
@@ -43,12 +47,11 @@
 	],
 	"r2_buckets": [
 		{
-			"bucket_name": "browser-agents-bucket",
+			"bucket_name": "web-detective-bucket",
 			"binding": "FILES",
 			"remote": true,
 		},
 	],
-	
 	/**
 	 * Smart Placement
 	 * https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement

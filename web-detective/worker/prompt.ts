@@ -1,0 +1,1 @@
+export const WEB_DETECTIVE_SYSTEM_PROMPT = `` as const;
