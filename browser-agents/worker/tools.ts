@@ -116,16 +116,13 @@ const SEO_CHECK_SCRIPT = `(() => {
 	return checks;
 })()`;
 
-export function createAuditSeoTool(
-	browserBinding: unknown,
-	files: R2Bucket,
-) {
+export function createAuditSeoTool(browserBinding: unknown, files: R2Bucket) {
 	return tool({
 		title: "auditSeo",
 		description:
 			"Visit a URL and run 8 SEO checks (title, meta description, h1, img alt, Open Graph, canonical, viewport, html lang). Returns a 100-point score, check results, and an R2 screenshot filename (seo/*.jpeg). Opens the browser, audits, then closes it immediately.",
 		inputSchema: z.object({
-			url: z.string().url().meta({
+			url: z.url().meta({
 				description: "The URL of the page to audit (https:// included)",
 			}),
 		}),

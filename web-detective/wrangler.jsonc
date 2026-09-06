@@ -8,33 +8,30 @@
 	"main": "worker/index.ts",
 	"compatibility_date": "2026-09-03",
 	"assets": {
-		"not_found_handling": "single-page-application"
+		"not_found_handling": "single-page-application",
+		"run_worker_first": ["/evidence/*", "/agents/*"]
 	},
 	"observability": {
 		"enabled": true
 	},
 	"upload_source_maps": true,
-	"compatibility_flags": [
-		"nodejs_compat"
-	],
+	"compatibility_flags": ["nodejs_compat"],
 	"ai": {
-		"binding": "AI",
+		"binding": "AI"
 	},
 	"durable_objects": {
 		"bindings": [
 			{
-				"class_name": "WebDetective",
-				"name": "WebDetective",
-			},
-		],
+				"class_name": "WebDetectiveAgent",
+				"name": "WebDetectiveAgent"
+			}
+		]
 	},
 	"migrations": [
 		{
-			"new_sqlite_classes": [
-				"WebDetective"
-			],
+			"new_sqlite_classes": ["WebDetectiveAgent"],
 			"tag": "v1"
-		},
+		}
 	],
 	"browser": {
 		"binding": "BROWSER",
