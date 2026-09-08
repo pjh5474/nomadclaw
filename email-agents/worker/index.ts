@@ -1,11 +1,23 @@
 import { AIChatAgent } from "@cloudflare/ai-chat";
-import { routeAgentRequest } from "agents";
+import { routeAgentEmail, routeAgentRequest } from "agents";
 import { createWorkersAI } from "workers-ai-provider";
-import { createUIMessageStreamResponse, toUIMessageStream, convertToModelMessages, isLoopFinished, streamText } from "ai";
-
+import {
+	createUIMessageStreamResponse,
+	toUIMessageStream,
+	convertToModelMessages,
+	isLoopFinished,
+	streamText,
+} from "ai";
+import { createAddressBasedEmailResolver, type AgentEmail } from "agents/email";
+import PostalMime from "postal-mime";
 
 export class EmailAgent extends AIChatAgent<Env> {
-  async onChatMessage(
+	async onEmail(email: AgentEmail) {
+		const raw = await email.getRaw();
+		const parsed = await PostalMime.parse(raw);
+		console.log(parsed.to, parsed.from, parsed.text);
+	}
+	async onChatMessage(
 		_onFinish: unknown,
 		options?: {
 			abortSignal?: AbortSignal;
@@ -48,5 +60,10 @@ export default {
 			(await routeAgentRequest(request, env)) ??
 			new Response(null, { status: 404 })
 		);
+	},
+	async email(message, env, ctx) {
+		await routeAgentEmail(message, env, {
+			resolver: createAddressBasedEmailResolver("EmailAgent"),
+		});
 	},
 } satisfies ExportedHandler<Env>;

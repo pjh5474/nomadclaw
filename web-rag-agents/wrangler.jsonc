@@ -2,11 +2,15 @@
  * For more details on how to configure Wrangler, refer to:
  * https://developers.cloudflare.com/workers/wrangler/configuration/
  */
+/**
+ * For more details on how to configure Wrangler, refer to:
+ * https://developers.cloudflare.com/workers/wrangler/configuration/
+ */
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "email-agents",
+	"name": "web-rag-agents",
 	"main": "worker/index.ts",
-	"compatibility_date": "2026-09-03",
+	"compatibility_date": "2026-05-15",
 	"assets": {
 		"not_found_handling": "single-page-application",
 	},
@@ -14,26 +18,30 @@
 		"enabled": true,
 	},
 	"upload_source_maps": true,
+	"compatibility_flags": ["nodejs_compat"],
 	"ai": {
 		"binding": "AI",
+		"remote": true,
 	},
 	"durable_objects": {
 		"bindings": [
 			{
-				"class_name": "EmailAgent",
-				"name": "EmailAgent",
+				"class_name": "RAGAgent",
+				"name": "RAGAgent",
 			},
 		],
 	},
 	"migrations": [
 		{
-			"new_sqlite_classes": ["EmailAgent"],
-			"tag": "v1",
+			"new_sqlite_classes": ["RAGAgent"],
+			"tag": "1",
 		},
 	],
-	"send_email": [
+	"vectorize": [
 		{
-			"name": "EMAIL",
+			"binding": "VECTORIZE",
+			"index_name": "claw-rag-index",
+			"remote": true,
 		},
 	],
 	/**
