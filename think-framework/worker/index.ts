@@ -1,5 +1,7 @@
-import { Think, type ChatResponseResult } from "@cloudflare/think";
+import { Think, skills } from "@cloudflare/think";
 import { callable, routeAgentRequest } from "agents";
+import type { ContextConfig } from "agents/context";
+import type { SkillSource } from "agents/skills";
 import { tool, type LanguageModel, type ToolSet } from "ai";
 import { createWorkersAI } from "workers-ai-provider";
 import { z } from "zod";
@@ -36,6 +38,7 @@ export class ThinkAgent extends Think<Env> {
 
 	async onChatResponse() {
 		await this.refreshFiles();
+		await this.context.refreshSystemPrompt();
 	}
 
 	getModel(): LanguageModel {
@@ -57,6 +60,29 @@ export class ThinkAgent extends Think<Env> {
 				},
 			}),
 		};
+	}
+
+	configureContext(): ContextConfig[] | Promise<ContextConfig[]> {
+		return [
+			{
+				label: "soul",
+				provider: {
+					get: async () => "You are very helpful but a bit sarcastic.",
+				},
+			},
+			{
+				label: "memory",
+				description: "Things to remember about the user across conversations.",
+				maxTokens: 10_000,
+			},
+		];
+	}
+
+	/** R2 skills catalog — Think adds the skills context block automatically. */
+	getSkills(): SkillSource[] {
+		return [
+			skills.r2(this.env.SKILLS, { prefix: "skills/", refreshIntervalMs: 0 }),
+		];
 	}
 
 	@callable()
