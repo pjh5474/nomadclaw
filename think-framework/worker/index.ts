@@ -5,6 +5,7 @@ import type { SkillSource } from "agents/skills";
 import { tool, type LanguageModel, type ToolSet } from "ai";
 import { createWorkersAI } from "workers-ai-provider";
 import { z } from "zod";
+import { createExtensionTools } from "@cloudflare/think/tools/extensions";
 
 type ThinkAgentState = {
 	files: {
@@ -16,6 +17,8 @@ type ThinkAgentState = {
 };
 
 export class ThinkAgent extends Think<Env> {
+	extensionLoader = this.env.LOADER;
+
 	initialState: ThinkAgentState = {
 		files: [],
 	};
@@ -59,6 +62,7 @@ export class ThinkAgent extends Think<Env> {
 					return `The weather in ${city} is sunny`;
 				},
 			}),
+			...createExtensionTools({ manager: this.extensionManager! }),
 		};
 	}
 
