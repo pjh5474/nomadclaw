@@ -1,9 +1,10 @@
-import { Agent, callable, getAgentByName, routeAgentRequest } from "agents";
+import { Agent, callable, routeAgentRequest } from "agents";
 import {
-	WorkflowEntrypoint,
-	WorkflowStep,
-	type WorkflowEvent,
-} from "cloudflare:workers";
+	AgentWorkflow,
+	type AgentWorkflowEvent,
+	type AgentWorkflowStep,
+} from "agents/workflows";
+
 import type { Order, State } from "./types";
 
 type Params = {
@@ -11,55 +12,64 @@ type Params = {
 	agentName: string;
 };
 
-type EventPayload = {
+type ApprovalMetadata = {
 	note: string;
 	eta: number;
 	approved: boolean;
 };
 
-export class PizzaWorkflow extends WorkflowEntrypoint<Env, Params> {
-	async run(event: WorkflowEvent<Params>, step: WorkflowStep) {
-		const reportProgress = async (patch: Partial<Order>) => {
-			const agent = await getAgentByName(
-				this.env.RestaurantAgent,
-				event.payload.agentName,
-			);
-			await agent.updateOrder(event.instanceId, patch);
+type WorkflowProgress = {
+	chargeAttempts: number;
+};
+
+export class PizzaWorkflow extends AgentWorkflow<
+	RestaurantAgent,
+	Params,
+	WorkflowProgress
+> {
+	async run(event: AgentWorkflowEvent<Params>, step: AgentWorkflowStep) {
+		// const reportProgress = async (patch: Partial<Order>) => {
+		// 	const agent = await getAgentByName(
+		// 		this.env.RestaurantAgent,
+		// 		event.payload.agentName,
+		// 	);
+		// 	await agent.updateOrder(event.instanceId, patch);
+		// };
+
+		const updateState = async (patch: Partial<Order>) => {
+			const orders = await this.agent.getOrders();
+			const order = orders[this.workflowId];
+			await step.updateAgentState({
+				orders: {
+					...orders,
+					[this.workflowId]: {
+						...order,
+						...patch,
+					},
+				},
+			});
 		};
 
-		await reportProgress({
+		await updateState({
 			stage: "awaiting-approval",
 		});
 
-		let decision;
-		try {
-			decision = await step.waitForEvent<EventPayload>("decide-approval", {
-				timeout: "30 seconds",
-				type: "potato-approval",
-			});
-		} catch (e) {
-			console.error(e);
-			await reportProgress({
-				stage: "rejected",
-			});
-			return;
-		}
-
-		if (!decision?.payload.approved) {
-			await reportProgress({
-				stage: "rejected",
-			});
-			return;
-		}
-
-		await reportProgress({
-			etaMinutes: decision?.payload.eta,
-			note: decision?.payload.note,
-			stage: "paying",
-		});
-
+		// let decision;
 		let attempt = 0;
 		try {
+			// decision = await step.waitForEvent<ApprovalMetadata>("decide-approval", {
+			// 	timeout: "30 seconds",
+			// 	type: "potato-approval",
+			// });
+			const decision = await this.waitForApproval<ApprovalMetadata>(step, {
+				timeout: "30 seconds",
+			});
+			await updateState({
+				etaMinutes: decision.eta,
+				note: decision.note,
+				stage: "paying",
+			});
+
 			await step.do(
 				"charge",
 				{
@@ -70,10 +80,10 @@ export class PizzaWorkflow extends WorkflowEntrypoint<Env, Params> {
 					},
 				},
 				async () => {
-					await reportProgress({
+					attempt++;
+					this.reportProgress({
 						chargeAttempts: attempt,
 					});
-					attempt++;
 					if (Math.random() < 0.8) throw new Error("Card declined");
 
 					return {
@@ -81,95 +91,179 @@ export class PizzaWorkflow extends WorkflowEntrypoint<Env, Params> {
 					};
 				},
 			);
+
+			await updateState({
+				stage: "preparing",
+			});
+
+			await step.sleep("preparing sleep", "5 seconds");
+
+			await updateState({
+				stage: "baking",
+			});
+
+			await step.sleep("baking sleep", "5 seconds");
+
+			await updateState({
+				stage: "delivering",
+			});
+
+			await step.sleep("delivering sleep", "5 seconds");
+
+			await updateState({
+				stage: "delivered",
+			});
 		} catch (e) {
-			console.log(e);
-			await reportProgress({
+			console.error(e);
+			await updateState({
 				stage: "rejected",
 			});
 			return;
 		}
 
-		await reportProgress({
-			stage: "preparing",
+		await step.reportComplete({
+			something: "hello",
 		});
 
-		await step.sleep("preparing sleep", "10 seconds");
+		// if (!decision?.payload.approved) {
+		// 	await updateState({
+		// 		stage: "rejected",
+		// 	});
+		// 	return;
+		// }
 
-		await reportProgress({
-			stage: "baking",
-		});
+		// await updateState({
+		// 	etaMinutes: decision?.payload.eta,
+		// 	note: decision?.payload.note,
+		// 	stage: "paying",
+		// });
 
-		await step.sleep("baking sleep", "10 seconds");
+		// let attempt = 0;
+		// try {
+		// 	await step.do(
+		// 		"charge",
+		// 		{
+		// 			retries: {
+		// 				limit: 10,
+		// 				delay: "5 seconds",
+		// 				backoff: "constant",
+		// 			},
+		// 		},
+		// 		async () => {
+		// 			await updateState({
+		// 				chargeAttempts: attempt,
+		// 			});
+		// 			attempt++;
+		// 			if (Math.random() < 0.8) throw new Error("Card declined");
 
-		await reportProgress({
-			stage: "delivering",
-		});
-
-		await step.sleep("delivering sleep", "10 seconds");
-
-		await reportProgress({
-			stage: "delivered",
-		});
+		// 			return {
+		// 				chargedAt: Date.now(),
+		// 			};
+		// 		},
+		// 	);
+		// } catch (e) {
+		// 	console.log(e);
+		// 	await updateState({
+		// 		stage: "rejected",
+		// 	});
+		// 	return;
+		// }
 	}
 }
 
 export class RestaurantAgent extends Agent<Env, State> {
 	initialState: State = { orders: {} };
 
+	async onWorkflowComplete(
+		workflowName: string,
+		workflowId: string,
+		result?: unknown,
+	) {
+		console.log("workflow complete", workflowName, workflowId, result);
+	}
+
 	@callable()
 	async placeOrder() {
-		const { id } = await this.env.PIZZA_WORKFLOW.create({
-			params: {
-				agentName: this.name,
-			},
-		});
+		// const { id } = await this.env.PIZZA_WORKFLOW.create({
+		// 	params: {
+		// 		agentName: this.name,
+		// 	},
+		// });
+		// this.setState({
+		// 	orders: {
+		// 		...this.state.orders,
+		// 		[id]: {
+		// 			orderId: id,
+		// 			stage: "pending",
+		// 		},
+		// 	},
+		// });
+		const orderId = await this.runWorkflow("PIZZA_WORKFLOW", {});
 		this.setState({
 			orders: {
 				...this.state.orders,
-				[id]: {
-					orderId: id,
+				[orderId]: {
+					orderId,
 					stage: "pending",
 				},
 			},
 		});
 	}
 
-	@callable()
-	async updateOrder(orderId: string, patch: Partial<Order>) {
-		this.setState({
-			orders: {
-				...this.state.orders,
-				[orderId]: {
-					...this.state.orders[orderId],
-					...patch,
-				},
-			},
-		});
+	getOrders() {
+		return this.state.orders;
 	}
+
+	// @callable()
+	// async updateOrder(orderId: string, patch: Partial<Order>) {
+	// 	this.setState({
+	// 		orders: {
+	// 			...this.state.orders,
+	// 			[orderId]: {
+	// 				...this.state.orders[orderId],
+	// 				...patch,
+	// 			},
+	// 		},
+	// 	});
+	// }
 
 	@callable()
 	async approveOrder(orderId: string, eta: number, note: string) {
-		const instance = await this.env.PIZZA_WORKFLOW.get(orderId);
-		await instance.sendEvent({
-			type: "potato-approval",
-			payload: {
-				note,
+		// const instance = await this.env.PIZZA_WORKFLOW.get(orderId);
+		// await instance.sendEvent({
+		// 	type: "potato-approval",
+		// 	payload: {
+		// 		note,
+		// 		eta,
+		// 		approved: true,
+		// 	},
+		// });
+		await this.approveWorkflow(orderId, {
+			reason: "Approved by the kitchen",
+			metadata: {
 				eta,
-				approved: true,
+				note,
 			},
 		});
 	}
 
 	@callable()
 	async rejectOrder(orderId: string) {
-		const instance = await this.env.PIZZA_WORKFLOW.get(orderId);
-		await instance.sendEvent({
-			type: "potato-approval",
-			payload: {
-				approved: false,
-			},
+		// const instance = await this.env.PIZZA_WORKFLOW.get(orderId);
+		// await instance.sendEvent({
+		// 	type: "potato-approval",
+		// 	payload: {
+		// 		approved: false,
+		// 	},
+		// });
+		await this.rejectWorkflow(orderId, {
+			reason: "Rejected by the kitchen",
 		});
 	}
+
+	// onWorkflowProgress(workflowName: string, workflowId: string, progress: DefaultProgress) {
+
+	// }
 }
 
 export default {
