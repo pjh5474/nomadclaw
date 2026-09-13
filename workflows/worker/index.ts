@@ -27,7 +27,7 @@ export class PizzaWorkflow extends AgentWorkflow<
 	Params,
 	WorkflowProgress
 > {
-	async run(event: AgentWorkflowEvent<Params>, step: AgentWorkflowStep) {
+	async run(_event: AgentWorkflowEvent<Params>, step: AgentWorkflowStep) {
 		// const reportProgress = async (patch: Partial<Order>) => {
 		// 	const agent = await getAgentByName(
 		// 		this.env.RestaurantAgent,
