@@ -2,6 +2,10 @@
 
 전제를 주면 **5장짜리 소설**을 Durable Object 에이전트가 이어서 쓰는 예제입니다. 긴 작업을 isolate eviction 뒤에도 이어 가게 하려고 `runFiber`를 씁니다.
 
+## 체험
+
+[https://durable-agents.warwarsn.workers.dev/](https://durable-agents.warwarsn.workers.dev/)
+
 ## 하는 일
 
 - `NovelistAgent`가 Workers AI로 장을 하나씩 생성

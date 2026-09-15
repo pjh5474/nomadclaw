@@ -2,6 +2,10 @@
 
 `AIChatAgent`로 스트리밍 채팅을 켜고, 모델이 **도구**를 호출하게 하는 기초 예제입니다.
 
+## 체험
+
+[https://ai-chat-agent-foundations.warwarsn.workers.dev/](https://ai-chat-agent-foundations.warwarsn.workers.dev/)
+
 ## 도구
 
 - `getWeather` — 날씨

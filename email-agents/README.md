@@ -2,6 +2,10 @@
 
 같은 `EmailAgent`가 **채팅**과 **이메일 수신**을 모두 받는 예제입니다.
 
+## 체험
+
+[https://email-agents.warwarsn.workers.dev/](https://email-agents.warwarsn.workers.dev/)
+
 ## 하는 일
 
 - `AIChatAgent`로 웹 채팅

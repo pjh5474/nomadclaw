@@ -2,6 +2,10 @@
 
 Durable Object WebSocket 채팅방에 **Alarm**을 붙여, 오래된 메시지를 주기적으로 지우는 입문 예제입니다.
 
+## 체험
+
+[https://introduction-to-alarms.warwarsn.workers.dev/](https://introduction-to-alarms.warwarsn.workers.dev/)
+
 ## 하는 일
 
 - 닉네임·방 ID로 WebSocket 채팅

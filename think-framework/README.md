@@ -2,6 +2,10 @@
 
 `@cloudflare/think` 하네스를 붙인 실험용 채팅 에이전트입니다. `getModel()`만으로 채팅·영속성·스트리밍·워크스페이스 파일 도구가 따라옵니다.
 
+## 체험
+
+[https://think-framework.warwarsn.workers.dev/](https://think-framework.warwarsn.workers.dev/)
+
 ## 배우는 것
 
 - `configureContext()` — soul / memory 블록 (`getSystemPrompt` 대신)

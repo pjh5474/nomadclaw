@@ -2,6 +2,10 @@
 
 Think로 만든 **개인 피트니스 코치**입니다. Think의 각 기능에 실제 역할을 붙였습니다.
 
+## 체험
+
+[https://fitness-coach.warwarsn.workers.dev/](https://fitness-coach.warwarsn.workers.dev/)
+
 | Think 기능 | 역할 |
 |------------|------|
 | 워크스페이스 | 훈련 기록. `saveTrainingLog`가 경로를 `logs/YYYY-MM-DD.md`로 고정 |

@@ -2,6 +2,10 @@
 
 업로드한 문서를 조각 내 **Workers AI 임베딩 + Vectorize**에 넣고, 질문에 가까운 조각을 찾아 답하는 RAG 에이전트입니다.
 
+## 체험
+
+[https://rag-agents.warwarsn.workers.dev/](https://rag-agents.warwarsn.workers.dev/)
+
 ## 하는 일
 
 - 마크다운을 약 500자 단위로 청크

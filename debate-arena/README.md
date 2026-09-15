@@ -2,6 +2,10 @@
 
 주제를 주면 부모 에이전트가 **찬반 두 측**을 정하고, 대변인 서브에이전트가 각자 주장을 만든 뒤 판정이 스트림됩니다.
 
+## 체험
+
+[https://debate-arena.warwarsn.workers.dev/](https://debate-arena.warwarsn.workers.dev/)
+
 ## 하는 일
 
 - `Advocate` 서브에이전트 두 명을 `Promise.all`로 동시에 호출

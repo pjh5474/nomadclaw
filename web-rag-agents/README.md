@@ -2,6 +2,10 @@
 
 관심 글 **URL을 저장**한 뒤, 그 내용을 바탕으로 질문하는 세컨드 브레인입니다. Browser Rendering `/markdown`으로 본문을 가져오고 Vectorize로 검색합니다.
 
+## 체험
+
+[https://web-rag-agents.warwarsn.workers.dev/](https://web-rag-agents.warwarsn.workers.dev/)
+
 ## 도구
 
 - `saveUrl` — 페이지를 청크·임베딩해 저장

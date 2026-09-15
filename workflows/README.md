@@ -2,6 +2,10 @@
 
 피자 주문을 **승인 → 결제(재시도) → 완료**로 이어 가는 `AgentWorkflow` 예제입니다.
 
+## 체험
+
+[https://workflows.warwarsn.workers.dev/](https://workflows.warwarsn.workers.dev/)
+
 ## 하는 일
 
 - `RestaurantAgent`가 주문 state를 들고 UI와 동기화

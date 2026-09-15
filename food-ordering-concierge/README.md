@@ -2,6 +2,10 @@
 
 채팅으로 가게·메뉴를 고르고 장바구니에 담아 주문하는 **음식 주문 컨시어지**입니다.
 
+## 체험
+
+[https://food-ordering-concierge.warwarsn.workers.dev/](https://food-ordering-concierge.warwarsn.workers.dev/)
+
 ## 도구
 
 - `getLocation` / `getStore` / `getMenu`

@@ -2,6 +2,10 @@
 
 Cloudflare Worker와 KV로 간단한 노트 API를 만드는 입문 예제입니다. Agent SDK 전에 **요청을 받아 저장소에 읽고 쓰는** 감각을 익힙니다.
 
+## 체험
+
+[https://introduction-to-workers.warwarsn.workers.dev/](https://introduction-to-workers.warwarsn.workers.dev/)
+
 ## 하는 일
 
 - `GET /` — API 사용법

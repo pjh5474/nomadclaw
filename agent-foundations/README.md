@@ -2,6 +2,10 @@
 
 Agents SDK로 만든 **실시간 투표 채팅방**입니다. 로비에서 방을 만들고, 참가자는 채팅·투표를 하고, 관전자는 결과만 봅니다.
 
+## 체험
+
+[https://agent-foundations.warwarsn.workers.dev/](https://agent-foundations.warwarsn.workers.dev/)
+
 ## 배우는 것
 
 - 방마다 `ChattingRoomAgent` Durable Object

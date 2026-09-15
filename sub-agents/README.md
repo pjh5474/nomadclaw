@@ -2,6 +2,10 @@
 
 부모 **Orchestrator**가 Cloudflare API로 리서치를 하는 **Researcher** 서브에이전트를 띄워, 여러 주제를 병렬로 조사하는 예제입니다.
 
+## 체험
+
+[https://sub-agents.warwarsn.workers.dev/](https://sub-agents.warwarsn.workers.dev/)
+
 ## 하는 일
 
 - `this.subAgent`으로 Researcher DO를 생성
