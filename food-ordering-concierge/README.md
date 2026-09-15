@@ -1,32 +1,17 @@
-# React + TypeScript + Vite
+# food-ordering-concierge
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+채팅으로 가게·메뉴를 고르고 장바구니에 담아 주문하는 **음식 주문 컨시어지**입니다.
 
-Currently, two official plugins are available:
+## 도구
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- `getLocation` / `getStore` / `getMenu`
+- `addToCart` / `viewCart` / `placeOrder`
 
-## React Compiler
+장바구니는 Agent state로 UI와 동기화됩니다. 카드 번호 같은 입력은 도구 스키마로 검증합니다.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 실행
 
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+npm install
+npm run dev
 ```
-
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.

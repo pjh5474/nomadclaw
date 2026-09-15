@@ -2,7 +2,7 @@ import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Eye, Loader2, MessageCircle, Send, Users } from "lucide-react";
+import { Eye, Loader2, LogOut, MessageCircle, Send, Users } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useAgent } from "agents/react";
 import type { Message, Session } from "@/shared/types";
@@ -26,7 +26,8 @@ export default function ChatRoom({
 	roomId,
 	roomToken,
 	readonly,
-}: Session) {
+	onLeave,
+}: Session & { onLeave: () => void }) {
 	const [isConnected, setIsConnected] = useState(false);
 	const [message, setMessage] = useState("");
 	const [messageHistory, setMessageHistory] = useState<Message[]>([]);
@@ -107,6 +108,9 @@ export default function ChatRoom({
 							{readonly ? " (관전)" : "님"} - {chatRoomName}
 						</p>
 					</div>
+					<Button type="button" variant="outline" size="sm" onClick={onLeave}>
+						로비로 돌아가기
+					</Button>
 				</div>
 			</div>
 		);
@@ -145,6 +149,16 @@ export default function ChatRoom({
 							<Eye className="size-4 text-primary" />
 							<span>{spectatorsOnline}명 관전 중</span>
 						</div>
+						<Button
+							type="button"
+							variant="outline"
+							size="sm"
+							className="gap-1.5"
+							onClick={onLeave}
+						>
+							<LogOut className="size-3.5" />
+							로비로
+						</Button>
 					</div>
 				</header>
 

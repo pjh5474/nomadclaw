@@ -10,7 +10,7 @@ function App() {
 		return <Lobby onEnter={setSession} />;
 	}
 
-	return <ChatRoom {...session} />;
+	return <ChatRoom {...session} onLeave={() => setSession(null)} />;
 }
 
 export default App;
